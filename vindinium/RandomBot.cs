@@ -17,49 +17,49 @@ namespace vindinium
         }
 
         //starts everything
-        public void run()
+        public void Run()
         {
             Console.Out.WriteLine("random bot running");
 
-            serverStuff.createGame();
+            serverStuff.CreateGame();
 
-            if (serverStuff.errored == false)
+            if (serverStuff.Errored == false)
             {
                 //opens up a webpage so you can view the game, doing it async so we dont time out
                 new Thread(delegate()
                 {
-                    System.Diagnostics.Process.Start(serverStuff.viewURL);
+                    System.Diagnostics.Process.Start(serverStuff.ViewURL);
                 }).Start();
             }
             
             Random random = new Random();
-            while (serverStuff.finished == false && serverStuff.errored == false)
+            while (serverStuff.IsFinished == false && serverStuff.Errored == false)
             {
                 switch(random.Next(0, 6))
                 {
                     case 0:
-                        serverStuff.moveHero(Direction.East);
+                        serverStuff.MoveHero(Direction.East);
                         break;
                     case 1:
-                        serverStuff.moveHero(Direction.North);
+                        serverStuff.MoveHero(Direction.North);
                         break;
                     case 2:
-                        serverStuff.moveHero(Direction.South);
+                        serverStuff.MoveHero(Direction.South);
                         break;
                     case 3:
-                        serverStuff.moveHero(Direction.Stay);
+                        serverStuff.MoveHero(Direction.Stay);
                         break;
                     case 4:
-                        serverStuff.moveHero(Direction.West);
+                        serverStuff.MoveHero(Direction.West);
                         break;
                 }
 
-                Console.Out.WriteLine("completed turn " + serverStuff.currentTurn);
+                Console.Out.WriteLine("completed turn " + serverStuff.CurrentTurn);
             }
 
-            if (serverStuff.errored)
+            if (serverStuff.Errored)
             {
-                Console.Out.WriteLine("error: " + serverStuff.errorText);
+                Console.Out.WriteLine("error: " + serverStuff.ErrorText);
             }
 
             Console.Out.WriteLine("random bot finished");

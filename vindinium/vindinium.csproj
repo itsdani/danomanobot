@@ -57,6 +57,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DanomanoBot.cs" />
     <Compile Include="DataContracts.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="Client.cs" />

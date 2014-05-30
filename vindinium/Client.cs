@@ -27,7 +27,7 @@ namespace vindinium
             RandomBot bot = new RandomBot(serverStuff);
 
             //now kick it all off by running the bot.
-            bot.run();
+            bot.Run();
 
             Console.Out.WriteLine("done");
 
