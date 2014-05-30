@@ -7,19 +7,19 @@ using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace vindinium
+namespace Vindinium
 {
     class ServerStuff
     {
         private string key;
-        public bool InTrainingMode { private get; private set; }
         private uint turns;
         private string map;
         private string serverURL;
-        
 
-        public string PlayURL { private get; private set; };
+        public bool InTrainingMode { get; private set; }
+        public string PlayURL { get; private set; }
         public string ViewURL { get; private set; }
+        public string Uri { get; private set; }
 
         public Hero MyHero { get; private set; }
         public List<Hero> Heroes { get; private set; }
@@ -40,10 +40,15 @@ namespace vindinium
             this.serverURL = serverURL;
 
             //the reaons im doing the if statement here is so that i dont have to do it later
-            if (trainingMode)
+            if (InTrainingMode)
             {
                 this.turns = turns;
                 this.map = map;
+                Uri = serverURL + "/api/training";
+            }
+            else
+            {
+                Uri = serverURL + "/api/arena";
             }
         }
 
@@ -51,17 +56,6 @@ namespace vindinium
         public void CreateGame()
         {
             Errored = false;
-
-            string uri;
-            
-            if (InTrainingMode)
-            {
-                uri = serverURL + "/api/training";
-            }
-            else
-            {
-                uri = serverURL + "/api/arena";
-            }
 
             string myParameters = "key=" + key;
             if (InTrainingMode) myParameters += "&turns=" + turns;
@@ -73,7 +67,7 @@ namespace vindinium
                 client.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
                 try
                 {
-                    string result = client.UploadString(uri, myParameters);
+                    string result = client.UploadString(Uri, myParameters);
                     Deserialize(result);
                 }
                 catch (WebException exception)
