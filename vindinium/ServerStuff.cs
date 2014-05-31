@@ -6,6 +6,7 @@ using System.Net;
 using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Threading.Tasks;
+using Vindinium.SmartBoard;
 
 namespace Vindinium
 {
@@ -21,16 +22,11 @@ namespace Vindinium
         public string ViewURL { get; private set; }
         public string Uri { get; private set; }
 
-        public Hero MyHero { get; private set; }
-        public List<Hero> Heroes { get; private set; }
 
-        public int CurrentTurn { get; private set; }
-        public int MaxTurns { get; private set; }
-        public bool IsFinished { get; private set; }
         public bool Errored { get; private set; }
         public string ErrorText { get; private set; }
 
-        public Tile[][] Board { get; private set; }
+        public GameState GameState { get; private set; }
 
         //if training mode is false, turns and map are ignored8
         public ServerStuff(string key, bool trainingMode, uint turns, string serverURL, string map)
@@ -53,7 +49,7 @@ namespace Vindinium
         }
 
         //initializes a new game, its syncronised
-        public void CreateGame()
+        public GameState CreateGame()
         {
             Errored = false;
 
@@ -68,7 +64,7 @@ namespace Vindinium
                 try
                 {
                     string result = client.UploadString(Uri, myParameters);
-                    Deserialize(result);
+                    return Deserialize(result);
                 }
                 catch (WebException exception)
                 {
@@ -77,11 +73,12 @@ namespace Vindinium
                     {
                         ErrorText = reader.ReadToEnd();
                     }
+                    return null;
                 }
             }
         }
 
-        private void Deserialize(string json)
+        private GameState Deserialize(string json)
         {
             // convert string to stream
             byte[] byteArray = Encoding.UTF8.GetBytes(json);
@@ -94,20 +91,33 @@ namespace Vindinium
             PlayURL = gameResponse.playUrl;
             ViewURL = gameResponse.viewUrl;
 
-            MyHero = gameResponse.hero;
-            Heroes = gameResponse.game.heroes;
 
-            CurrentTurn = gameResponse.game.turn;
-            MaxTurns = gameResponse.game.maxTurns;
-            IsFinished = gameResponse.game.finished;
+            Hero myHero = gameResponse.hero;
+            List<Hero> heroes = gameResponse.game.heroes;
 
-            CreateBoard(gameResponse.game.board.size, gameResponse.game.board.tiles);
+            int currentTurn = gameResponse.game.turn;
+            int maxTurns = gameResponse.game.maxTurns;
+            bool isFinished = gameResponse.game.finished;
+
+            TileType[][] boardArray = CreateBoard(gameResponse.game.board.size, gameResponse.game.board.tiles);
+            Board board = null;
+            if (GameState == null)
+            {
+                board = new Board(boardArray.Select(row => row.ToList()).ToList());
+            }
+            else
+            {
+                board = GameState.Board.Refresh(boardArray.Select(row => row.ToList()).ToList());
+            }
+            GameState = new GameState(myHero, heroes, currentTurn, maxTurns, isFinished, board);
+
+            return GameState;
         }
 
-        public void MoveHero(string direction)
+        public GameState MoveHero(string direction)
         {
             string myParameters = "key=" + key + "&dir=" + direction;
-            
+
             //make the request
             using (WebClient client = new WebClient())
             {
@@ -116,86 +126,84 @@ namespace Vindinium
                 try
                 {
                     string result = client.UploadString(PlayURL, myParameters);
-                    Deserialize(result);
+                    return Deserialize(result);
                 }
-                catch(WebException exception)
+                catch (WebException exception)
                 {
                     Errored = true;
-                    using(var reader = new StreamReader(exception.Response.GetResponseStream()))
+                    using (var reader = new StreamReader(exception.Response.GetResponseStream()))
                     {
                         ErrorText = reader.ReadToEnd();
                     }
+                    return null;
                 }
             }
         }
 
-        private void CreateBoard(int size, string data)
+        private TileType[][] CreateBoard(int size, string data)
         {
-            //check to see if the board list is already created, if it is, we just overwrite its values
-            if (Board == null || Board.Length != size)
-            {
-                Board = new Tile[size][];
+            TileType[][] boardArray = new TileType[size][];
 
-                //need to initialize the lists within the list
-                for (int i = 0; i < size; i++)
-                {
-                    Board[i] = new Tile[size];
-                }
+            //need to initialize the lists within the list
+            for (int i = 0; i < size; i++)
+            {
+                boardArray[i] = new TileType[size];
             }
 
-            //convert the string to the List<List<Tile>>
+
+            //convert the string to the TileType[][]
             int x = 0;
             int y = 0;
             char[] charData = data.ToCharArray();
 
-            for(int i = 0;i < charData.Length;i += 2)
+            for (int i = 0; i < charData.Length; i += 2)
             {
                 switch (charData[i])
                 {
                     case '#':
-                        Board[x][y] = Tile.IMPASSABLE_WOOD;
+                        boardArray[x][y] = TileType.IMPASSABLE_WOOD;
                         break;
                     case ' ':
-                        Board[x][y] = Tile.FREE;
+                        boardArray[x][y] = TileType.FREE;
                         break;
                     case '@':
                         switch (charData[i + 1])
                         {
                             case '1':
-                                Board[x][y] = Tile.HERO_1;
+                                boardArray[x][y] = TileType.HERO_1;
                                 break;
                             case '2':
-                                Board[x][y] = Tile.HERO_2;
+                                boardArray[x][y] = TileType.HERO_2;
                                 break;
                             case '3':
-                                Board[x][y] = Tile.HERO_3;
+                                boardArray[x][y] = TileType.HERO_3;
                                 break;
                             case '4':
-                                Board[x][y] = Tile.HERO_4;
+                                boardArray[x][y] = TileType.HERO_4;
                                 break;
 
                         }
                         break;
                     case '[':
-                        Board[x][y] = Tile.TAVERN;
+                        boardArray[x][y] = TileType.TAVERN;
                         break;
                     case '$':
                         switch (charData[i + 1])
                         {
                             case '-':
-                                Board[x][y] = Tile.GOLD_MINE_NEUTRAL;
+                                boardArray[x][y] = TileType.GOLD_MINE_NEUTRAL;
                                 break;
                             case '1':
-                                Board[x][y] = Tile.GOLD_MINE_1;
+                                boardArray[x][y] = TileType.GOLD_MINE_1;
                                 break;
                             case '2':
-                                Board[x][y] = Tile.GOLD_MINE_2;
+                                boardArray[x][y] = TileType.GOLD_MINE_2;
                                 break;
                             case '3':
-                                Board[x][y] = Tile.GOLD_MINE_3;
+                                boardArray[x][y] = TileType.GOLD_MINE_3;
                                 break;
                             case '4':
-                                Board[x][y] = Tile.GOLD_MINE_4;
+                                boardArray[x][y] = TileType.GOLD_MINE_4;
                                 break;
                         }
                         break;
@@ -209,6 +217,7 @@ namespace Vindinium
                     y++;
                 }
             }
+            return boardArray;
         }
     }
 }

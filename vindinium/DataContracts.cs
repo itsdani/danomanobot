@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Vindinium
 {
     [DataContract]
-    class GameResponse
+    public class GameResponse
     {
         [DataMember]
         internal Game game;
@@ -27,7 +27,7 @@ namespace Vindinium
     }
 
     [DataContract]
-    class Game
+    public class Game
     {
         [DataMember]
         internal string id;
@@ -42,14 +42,14 @@ namespace Vindinium
         internal List<Hero> heroes;
 
         [DataMember]
-        internal Board board;
+        internal BasicBoard board;
 
         [DataMember]
         internal bool finished;
     }
 
     [DataContract]
-    class Hero
+    public class Hero
     {
         [DataMember]
         internal int id;
@@ -61,7 +61,7 @@ namespace Vindinium
         internal int elo;
 
         [DataMember]
-        internal Pos pos;
+        internal Position pos;
 
         [DataMember]
         internal int life;
@@ -73,24 +73,48 @@ namespace Vindinium
         internal int mineCount;
 
         [DataMember]
-        internal Pos spawnPos;
+        internal Position spawnPos;
 
         [DataMember]
         internal bool crashed;
     }
 
     [DataContract]
-    class Pos
+    public class Position
     {
+        public Position(int x, int y)
+        {
+            this.x = x;
+            this.y = y;
+        }
+
         [DataMember]
         internal int x;
 
         [DataMember]
         internal int y;
+
+        public override int GetHashCode()
+        {
+            return 127*(13+x)+y;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is Position)
+            {
+                Position pos = (Position)obj;
+                if (pos.x==this.x && pos.y == this.y)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 
     [DataContract]
-    class Board
+    public class BasicBoard
     {
         [DataMember]
         internal int size;

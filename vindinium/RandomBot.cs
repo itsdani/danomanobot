@@ -33,7 +33,7 @@ namespace Vindinium
             }
             
             Random random = new Random();
-            while (serverStuff.IsFinished == false && serverStuff.Errored == false)
+            while (serverStuff.GameState.IsFinished == false && serverStuff.Errored == false)
             {
                 switch(random.Next(0, 6))
                 {
@@ -54,7 +54,7 @@ namespace Vindinium
                         break;
                 }
 
-                Console.Out.WriteLine("completed turn " + serverStuff.CurrentTurn);
+                Console.Out.WriteLine("completed turn " + serverStuff.GameState.CurrentTurn);
             }
 
             if (serverStuff.Errored)
