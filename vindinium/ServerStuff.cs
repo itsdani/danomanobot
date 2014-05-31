@@ -10,7 +10,7 @@ using Vindinium.SmartBoard;
 
 namespace Vindinium
 {
-    class ServerStuff
+    public class ServerStuff
     {
         private string key;
         private uint turns;
@@ -22,6 +22,8 @@ namespace Vindinium
         public string ViewURL { get; private set; }
         public string Uri { get; private set; }
 
+        public TileType[][] BoardArray;
+        public GameResponse GameResponse;
 
         public bool Errored { get; private set; }
         public string ErrorText { get; private set; }
@@ -87,6 +89,7 @@ namespace Vindinium
 
             DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(GameResponse));
             GameResponse gameResponse = (GameResponse)ser.ReadObject(stream);
+            GameResponse = gameResponse; // TODO debug
 
             PlayURL = gameResponse.playUrl;
             ViewURL = gameResponse.viewUrl;
@@ -99,15 +102,15 @@ namespace Vindinium
             int maxTurns = gameResponse.game.maxTurns;
             bool isFinished = gameResponse.game.finished;
 
-            TileType[][] boardArray = CreateBoard(gameResponse.game.board.size, gameResponse.game.board.tiles);
+            BoardArray = CreateBoard(gameResponse.game.board.size, gameResponse.game.board.tiles);
             Board board = null;
             if (GameState == null)
             {
-                board = new Board(boardArray.Select(row => row.ToList()).ToList());
+                board = new Board(BoardArray.Select(row => row.ToList()).ToList());
             }
             else
             {
-                board = GameState.Board.Refresh(boardArray.Select(row => row.ToList()).ToList());
+                board = GameState.Board.Refresh(BoardArray.Select(row => row.ToList()).ToList());
             }
             GameState = new GameState(myHero, heroes, currentTurn, maxTurns, isFinished, board);
 
@@ -210,11 +213,11 @@ namespace Vindinium
                 }
 
                 //time to increment x and y
-                x++;
-                if (x == size)
+                y++;
+                if (y == size)
                 {
-                    x = 0;
-                    y++;
+                    y = 0;
+                    x++;
                 }
             }
             return boardArray;

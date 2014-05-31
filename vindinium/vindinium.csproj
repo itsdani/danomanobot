@@ -57,15 +57,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Board\Board.cs" />
-    <Compile Include="Board\Tile.cs" />
-    <Compile Include="DanomanoBot.cs" />
+    <Compile Include="Bots\Bot.cs" />
+    <Compile Include="SmartBoard\Board.cs" />
+    <Compile Include="SmartBoard\Tile.cs" />
+    <Compile Include="Bots\DanomanoBot.cs" />
     <Compile Include="DataContracts.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="Client.cs" />
     <Compile Include="GameState.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RandomBot.cs" />
+    <Compile Include="Bots\RandomBot.cs" />
     <Compile Include="ServerStuff.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Vindinium.Bots;
 
 namespace Vindinium
 {
@@ -24,7 +25,7 @@ namespace Vindinium
             ServerStuff serverStuff = new ServerStuff(args[0], args[1] != "arena", uint.Parse(args[2]), serverURL, null);
 
             //create the random bot, replace this with your own bot
-            RandomBot bot = new RandomBot(serverStuff);
+            Bot bot = new DanomanoBot(serverStuff);
 
             //now kick it all off by running the bot.
             bot.Run();

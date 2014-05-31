@@ -56,19 +56,19 @@ namespace Vindinium.SmartBoard
             {
                 if (tile.XPos != 0)
                 {
-                    TryToAddNeighbourInDirection(tile, DirectionEnum.WEST);
+                    TryToAddNeighbourInDirection(tile, DirectionEnum.NORTH);
                 }
                 if (tile.XPos != this.Size - 1)
                 {
-                    TryToAddNeighbourInDirection(tile, DirectionEnum.EAST);
+                    TryToAddNeighbourInDirection(tile, DirectionEnum.SOUTH);
                 }
                 if (tile.YPos != 0)
                 {
-                    TryToAddNeighbourInDirection(tile, DirectionEnum.NORTH);
+                    TryToAddNeighbourInDirection(tile, DirectionEnum.WEST);
                 }
                 if (tile.YPos != this.Size - 1)
                 {
-                    TryToAddNeighbourInDirection(tile, DirectionEnum.SOUTH);
+                    TryToAddNeighbourInDirection(tile, DirectionEnum.EAST);
                 }
             }
         }
@@ -81,19 +81,19 @@ namespace Vindinium.SmartBoard
                     throw new InvalidOperationException();
                     break;
                 case DirectionEnum.NORTH:
-                    Tile possibleNorthNeighbour = GetTile(new Position(tile.XPos, tile.YPos - 1));
+                    Tile possibleNorthNeighbour = GetTile(new Position(tile.XPos - 1, tile.YPos));
                     AddNeighbour(tile, possibleNorthNeighbour);
                     break;
                 case DirectionEnum.EAST:
-                    Tile possibleEastNeighbour = GetTile(new Position(tile.XPos + 1, tile.YPos));
+                    Tile possibleEastNeighbour = GetTile(new Position(tile.XPos, tile.YPos + 1));
                     AddNeighbour(tile, possibleEastNeighbour);
                     break;
                 case DirectionEnum.SOUTH:
-                    Tile possibleSouthNeighbour = GetTile(new Position(tile.XPos, tile.YPos + 1));
+                    Tile possibleSouthNeighbour = GetTile(new Position(tile.XPos + 1, tile.YPos));
                     AddNeighbour(tile, possibleSouthNeighbour);
                     break;
                 case DirectionEnum.WEST:
-                    Tile possibleWestNeighbour = GetTile(new Position(tile.XPos - 1, tile.YPos));
+                    Tile possibleWestNeighbour = GetTile(new Position(tile.XPos, tile.YPos - 1));
                     AddNeighbour(tile, possibleWestNeighbour);
                     break;
                 default:
