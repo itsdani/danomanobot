@@ -58,6 +58,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bots\Bot.cs" />
+    <Compile Include="SmartBoard\Pathfinder\Heuristic\IHeuristic.cs" />
+    <Compile Include="SmartBoard\Pathfinder\IPathFinder.cs" />
     <Compile Include="SmartBoard\Board.cs" />
     <Compile Include="SmartBoard\Tile.cs" />
     <Compile Include="Bots\DanomanoBot.cs" />
