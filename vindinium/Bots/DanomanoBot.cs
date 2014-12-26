@@ -4,50 +4,60 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Vindinium.SmartBoard;
+using Vindinium.SmartBoard.Pathfinder;
 
 namespace Vindinium.Bots
 {
     public class DanomanoBot : Bot
     {
+        private IPathFinder PathFinder { get; set; }
+
         public DanomanoBot(ServerStuff serverStuff) : base(serverStuff)
         {
+            PathFinder = new RandomSearch();
         }
 
         protected override void Play()
         {
-            Random random = new Random();
             while (GameState.IsFinished == false && ServerStuff.Errored == false)
             {
-                Position myPosition = GameState.MyHero.pos;
-                Tile eastTile = Board.GetTile(new Position(myPosition.x, myPosition.y+1));
-                Tile northTile = Board.GetTile(new Position(myPosition.x+1, myPosition.y));
-                Tile westTile = Board.GetTile(new Position(myPosition.x, myPosition.y-1));
-                Tile southTile = Board.GetTile(new Position(myPosition.x-1, myPosition.y));
-
-
-                if (eastTile != null)
-                {
-                    ServerStuff.MoveHero(Direction.East);
-                }
-                else if (northTile != null)
-                {
-                    ServerStuff.MoveHero(Direction.North);
-                }
-                else if (westTile != null)
-                {
-                    ServerStuff.MoveHero(Direction.West);
-                }
-                else if (southTile != null)
-                {
-                    ServerStuff.MoveHero(Direction.South);
-                }
-                else
-                {
-                    ServerStuff.MoveHero(Direction.Stay);
-                }
-
+                string direction = PathFinder.GetDirection(null, null, null);
+                Console.WriteLine("Moving in direction: {0}", direction);
+                ServerStuff.MoveHero(direction);
                 Console.Out.WriteLine("completed turn " + ServerStuff.GameState.CurrentTurn);
             }
+#region commented not-random
+            //Random random = new Random();
+            //while (GameState.IsFinished == false && ServerStuff.Errored == false)
+            //{
+            //    Position myPosition = GameState.MyHero.pos;
+            //    Tile eastTile = Board.GetTile(new Position(myPosition.x, myPosition.y+1));
+            //    Tile northTile = Board.GetTile(new Position(myPosition.x+1, myPosition.y));
+            //    Tile westTile = Board.GetTile(new Position(myPosition.x, myPosition.y-1));
+            //    Tile southTile = Board.GetTile(new Position(myPosition.x-1, myPosition.y));
+            //    if (eastTile != null)
+            //    {
+            //        ServerStuff.MoveHero(Direction.East);
+            //    }
+            //    else if (northTile != null)
+            //    {
+            //        ServerStuff.MoveHero(Direction.North);
+            //    }
+            //    else if (westTile != null)
+            //    {
+            //        ServerStuff.MoveHero(Direction.West);
+            //    }
+            //    else if (southTile != null)
+            //    {
+            //        ServerStuff.MoveHero(Direction.South);
+            //    }
+            //    else
+            //    {
+            //        ServerStuff.MoveHero(Direction.Stay);
+            //    }
+            //    Console.Out.WriteLine("completed turn " + ServerStuff.GameState.CurrentTurn);
+            //}
+#endregion
 
             if (ServerStuff.Errored)
             {
