@@ -25,12 +25,12 @@ namespace Vindinium.SmartBoard
                 _tiles = value;
             }
         }
-        private List<List<TileType>> boardArray;
+        private List<List<TileType>> _boardArray;
         public int Size { get; private set; }
 
         public Board(List<List<TileType>> boardArray)
         {
-            this.boardArray = boardArray;
+            _boardArray = boardArray;
             Size = boardArray.Count;
             for (int i = 0; i < Size; i++)
             {
