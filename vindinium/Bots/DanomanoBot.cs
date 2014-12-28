@@ -14,19 +14,22 @@ namespace Vindinium.Bots
 
         public DanomanoBot(ServerStuff serverStuff) : base(serverStuff)
         {
-            PathFinder = new RandomSearch();
+            PathFinder = new BreadthFirstSearch();
         }
 
         protected override void Play()
         {
             while (GameState.IsFinished == false && ServerStuff.Errored == false)
             {
-                string direction = PathFinder.GetDirection(null, null, null);
+                var myHeroTile = Board.GetTile(GameState.MyHero.pos);
+                var destinationTile = Board.GetTile(new Position(6, 6));
+                Console.WriteLine("Want to go: {0} --> {1}", myHeroTile, destinationTile);
+                string direction = PathFinder.GetDirection(myHeroTile, destinationTile, Board);
                 Console.WriteLine("Moving in direction: {0}", direction);
                 ServerStuff.MoveHero(direction);
                 Console.Out.WriteLine("completed turn " + ServerStuff.GameState.CurrentTurn);
             }
-#region commented not-random
+            #region commented not-random
             //Random random = new Random();
             //while (GameState.IsFinished == false && ServerStuff.Errored == false)
             //{
@@ -57,7 +60,7 @@ namespace Vindinium.Bots
             //    }
             //    Console.Out.WriteLine("completed turn " + ServerStuff.GameState.CurrentTurn);
             //}
-#endregion
+            #endregion
 
             if (ServerStuff.Errored)
             {
@@ -76,11 +79,11 @@ namespace Vindinium.Bots
                 {
                     foreach (var item in row)
                     {
-                        file.Write("{0}, ",item);
+                        file.Write("{0}, ", item);
                     }
                     file.WriteLine();
                 }
             }
-        }      
+        }
     }
 }

@@ -103,7 +103,7 @@ namespace Vindinium
         {
             if (obj is Position)
             {
-                Position pos = (Position)obj;
+                Position pos = obj as Position;
                 if (pos.x==this.x && pos.y == this.y)
                 {
                     return true;

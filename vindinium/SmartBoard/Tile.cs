@@ -104,11 +104,16 @@ namespace Vindinium.SmartBoard
             {
                 return false;
             }
-            if (other.ID == this.ID && other.Position.Equals(this.Position) && this.Type == other.Type)
+            if (other.Position.Equals(this.Position))
             {
                 return true;
             }
             return false;
+        }
+
+        public override string ToString()
+        {
+            return "("+XPos +"; " + YPos+")";
         }
     }
 }

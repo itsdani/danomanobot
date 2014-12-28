@@ -8,6 +8,6 @@ namespace Vindinium.SmartBoard.Pathfinder
 {
     interface IPathFinder
     {
-        string GetDirection(Tile starTile, Tile destinationTile, Board board);
+        string GetDirection(Tile startTile, Tile destinationTile, Board board);
     }
 }

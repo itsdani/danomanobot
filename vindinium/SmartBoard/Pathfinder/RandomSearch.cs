@@ -11,7 +11,7 @@ namespace Vindinium.SmartBoard.Pathfinder
         private readonly Random _random = new Random();
 
 
-        public string GetDirection(Tile starTile, Tile destinationTile, Board board)
+        public string GetDirection(Tile startTile, Tile destinationTile, Board board)
         {
             
             switch(_random.Next(0, 5))
